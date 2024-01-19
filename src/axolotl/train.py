@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Tuple, Union
 
+import time
+
 import torch
 import transformers.modelcard
 from accelerate.logging import get_logger
@@ -62,7 +64,10 @@ def train(
     if cfg.adapter:
         msg += " and peft_config..."
     LOG.debug(msg)
+    start_time = time.time()
     model, peft_config = load_model(cfg, tokenizer, inference=cli_args.inference)
+    end_time = time.time()
+    LOG.info(f"Model loading took - CUSTOM {end_time - start_time} seconds")
     model_ref = None
     if cfg.rl:
         if cfg.adapter and not cfg.rl_adapter_ref_model:
